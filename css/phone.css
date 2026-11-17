@@ -1,0 +1,271 @@
+/* IS89 · Martorul anonim · modul telefon
+   player.js pune clasa .m pe <html> când pânza de 1920 × 1080 ar face textul prea mic (telefon, tabletă în picioare,
+   fereastră îngustă). Atunci ecranele curg pe o singură coloană și pagina se derulează în sus și în jos.
+   Conținutul ecranelor și al ferestrelor e mărit cu zoom: --z (0,55–0,75), pe o lățime „de pânză” --vw (în medie 600 px).
+   Bara de control, subtitrarea, logo-ul de la început și mesajele sunt în pixeli reali.
+   .m-wide = ecran lat (telefon culcat, tabletă): unele liste trec pe două coloane. */
+
+/* ---------- Pagina ---------- */
+html.m { height: auto; min-height: 100%; overflow-x: hidden; overflow-y: auto; background: var(--table); scrollbar-gutter: stable; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+.m body { height: auto; min-height: 100%; overflow: visible; background: var(--table); }
+html.m.has-modal, .m.has-modal body { overflow: hidden; }
+.m .app { position: relative; width: 100%; height: auto; transform: none !important; }
+.m .stage { width: 100%; height: auto; min-height: 100vh; min-height: 100svh; overflow: visible; padding-bottom: 56px; background: var(--table); }
+.m .stage:has(.slide--paper) { background: var(--paper); }
+.m .slide { position: relative; inset: auto; width: var(--vw); zoom: var(--z); }
+
+/* ---------- Antet: logo + modul, apoi Cadrul meu / Planul meu pe rândul lor ---------- */
+.m .hdr { position: relative; height: auto; flex-wrap: wrap; gap: 16px 20px; padding: 24px 28px 18px; }
+.m .hdr-logo { width: 100px; }
+.m .hdr-mod { font-size: 23px; }
+.m .tools { width: 100%; margin-left: 0; gap: 14px; }
+.m .tool { flex: 1; min-width: 0; height: 76px; font-size: 23px; }
+.m-wide .tools { width: auto; margin-left: auto; }
+.m-wide .tool { flex: none; }
+.m .rule-dots { position: relative; left: auto; right: auto; top: auto; margin: 0 28px; }
+.m .body { position: relative; inset: auto; padding: 32px 28px 48px; }
+.m-wide .body, .m-wide .t11, .m-wide .fin, .m-wide .cr, .m-wide .rz { padding-left: max(28px, calc((var(--vw) - 1060px) / 2)); padding-right: max(28px, calc((var(--vw) - 1060px) / 2)); }
+
+/* ---------- Tipografie și elemente comune ---------- */
+.m .h1 { margin-bottom: 26px; font-size: 48px; }
+.m .h2 { font-size: 38px; }
+.m .small { font-size: 22px; }
+.m .actions { position: static; margin-top: 36px; flex-wrap: wrap; justify-content: flex-end; }
+.m .actions--left { justify-content: flex-start; }
+.m .btn-row { gap: 16px; }
+.m .mid { height: auto; display: block; padding-bottom: 0; }
+.m .field textarea { max-height: 360px; }
+.m .field .count { font-size: 21px; }
+.m .sheet-lbl { font-size: 21px; }
+/* Câmpurile de scris au cel puțin 16 px pe ecran: altfel iPhone-ul mărește pagina când elevul atinge câmpul. */
+.m .field textarea, .m .field input[type=text] { font-size: max(26px, calc(16.5px / var(--z))); }
+.m .sheet-text { font-size: max(27px, calc(16.5px / var(--z))); }
+.m .sheet-title { font-size: max(34px, calc(16.5px / var(--z))); }
+.m .vslot, .m .vplayer { width: 100% !important; height: auto !important; aspect-ratio: 16 / 9; }
+
+/* ---------- 1.1 Start ---------- */
+.m .t11 { position: relative; inset: auto; display: flex; flex-direction: column; padding: 44px 28px 36px; }
+.m .t11-logo { position: static; width: 400px; max-width: 78%; }
+.m .t11-copy { position: static; width: auto; margin-top: 34px; }
+.m .t11-title { font-size: 78px; }
+.m .t11-sub { margin-top: 20px; font-size: 31px; }
+.m .t11-go { margin-top: 32px; min-width: 280px; }
+.m .t11-film { position: relative; top: auto; margin: 44px -28px 0; }
+.m .t11-film .film-row, .m .fin-film .film-row, .m .f31 .film-row { flex-wrap: wrap; justify-content: center; gap: 16px; padding: 0 20px; }
+.m .t11-film .film-frame { width: calc(50% - 8px); height: auto; aspect-ratio: 3 / 2; }
+.m-wide .t11-film .film-frame { width: calc(25% - 12px); }
+.m .t11-foot { position: static; flex-direction: column; align-items: flex-start; gap: 22px; margin-top: 34px; }
+.m .logos { flex-wrap: wrap; gap: 24px 40px; }
+
+/* ---------- 1.2 – 1.4 ---------- */
+.m .g12 { grid-template-columns: 1fr; gap: 40px; }
+.m .g12-l { gap: 36px; }
+.m .g12-q { font-size: 40px; }
+.m .corner-hint { position: static; margin: 0 0 22px; }
+.m .steps { grid-template-columns: 1fr; gap: 34px; margin-top: 10px; }
+.m-wide .steps { grid-template-columns: 1fr 1fr; gap: 40px 48px; }
+.m .step { grid-template-columns: 80px 1fr; gap: 18px; }
+.m .step-n { font-size: 88px; }
+.m .t13 { position: static; width: auto; margin-top: 36px; }
+.m .m14-sub { margin: -10px 0 28px; }
+.m .tiles { grid-template-columns: 1fr; gap: 14px; }
+.m-wide .tiles { grid-template-columns: 1fr 1fr; }
+.m .tile { height: auto; display: grid; grid-template-columns: 84px minmax(0, 1fr); align-items: start; gap: 6px 22px; padding: 24px 24px 26px; }
+.m .tile > * { grid-column: 2; }
+.m .tile-n { grid-column: 1; grid-row: 1 / span 4; margin: 0; font-size: 100px; }
+.m .tile-done, .m .tile-lock { margin-top: 10px; }
+
+/* ---------- 2.1 – 2.5 ---------- */
+.m .inv { margin-bottom: 40px; font-size: 42px; }
+.m .facts { grid-template-columns: 1fr; gap: 30px; }
+.m-wide .facts { grid-template-columns: repeat(3, 1fr); }
+.m .g22 { grid-template-columns: 1fr; gap: 36px; }
+.m .g22-web { width: auto; grid-template-columns: 1fr; gap: 22px; }
+.m-wide .g22-web { grid-template-columns: 1fr 1fr; }
+.m .vcard--g22 { height: auto; }
+.m .arc { flex-direction: column; align-items: stretch; }
+.m .arc-link { width: 4px; height: 30px; align-self: center; background-image: radial-gradient(circle, var(--dot) 2px, transparent 2.4px); background-size: 4px 12px; }
+.m .part { flex: none; height: 88px; }
+.m .part--ritm { height: auto; min-height: 88px; flex-wrap: wrap; padding: 16px 26px; gap: 8px 16px; }
+.m .rhythm { margin-left: 0; flex-wrap: wrap; gap: 8px 14px; font-size: 21px; }
+.m .rh--dense { width: 150px; }
+.m .rh--sparse { width: 190px; }
+.m .panel23 { margin-top: 36px; }
+.m .panel23 .lead { font-size: 30px; }
+.m .fb24 { position: static; width: auto; margin-top: 28px; }
+.m .optl { grid-template-columns: 40px 36px minmax(0, 1fr); padding: 22px 22px; }
+.m .optl:has(input:checked) { padding: 20px 20px; }
+.m .optl .txt { font-size: 29px; }
+.m .vids { grid-template-columns: 1fr; gap: 24px; }
+.m-wide .vids { grid-template-columns: 1fr 1fr; }
+.m .vcard { height: auto; }
+.m .vcard-go { margin-top: 16px; }
+
+/* ---------- 3.1 Cadrele, 3.2 Sintagma ---------- */
+.m .f31 { margin: 36px -28px 0; padding: 44px 0; }
+.m .f31-b { width: calc(50% - 8px); height: auto; aspect-ratio: 3 / 2; }
+.m-wide .f31-b { width: calc(25% - 12px); }
+.m .f31-foot { flex-direction: column; align-items: flex-start; gap: 20px; margin-top: 30px; }
+.m .g32 { grid-template-columns: 1fr; gap: 36px; }
+.m .phrase { margin-top: 0; font-size: 72px; }
+.m .g32-r { padding: 30px 30px 34px; }
+
+/* ---------- Întrebările 4.1 – 4.9 ---------- */
+.m .q { grid-template-columns: 1fr; gap: 34px; }
+.m .qhead { margin-bottom: 18px; }
+.m .qnum { font-size: 88px; }
+.m .qtext { margin-bottom: 24px; }
+.m .q-r { padding-top: 0; }
+.m .q-r--low { padding-top: 0; }
+.m .q-foot { position: static; margin: 0 28px 34px; }
+.m .opt span { min-height: 70px; }
+.m .picks { gap: 30px 24px; }
+.m .pick-print { height: 180px; }
+.m .pick .ring { left: -10px; top: -12px; width: calc(100% + 20px); height: calc(100% + 24px); }
+.m .pick input:focus-visible + .pick-print { outline-offset: 10px; }
+.m .trip { grid-template-columns: 1fr; gap: 8px; }
+.m .trip-arrow { margin: 0; transform: rotate(90deg); }
+.m .trip-mid { margin: 0; }
+.m .trip-print { height: 270px; }
+.m .tline { width: 100%; margin-top: 44px; height: 130px; }
+.m .tl-l { width: 33%; white-space: normal; text-align: center; font-size: 21px; line-height: 1.3; }
+.m .tline .tl-l:nth-of-type(4) { left: 0; transform: none; text-align: left; }
+.m .tline .tl-l:nth-of-type(6) { left: auto; right: 0; transform: none; text-align: right; }
+.m .g410 { grid-template-columns: 1fr; gap: 40px; }
+.m .g410-btns { margin: 30px 0 28px; }
+.m .sheet-mini { height: auto; max-height: 620px; transform: rotate(.8deg); }
+
+/* ---------- 5.1 – 5.3 Scrisul ---------- */
+.m .w51, .m .w53 { grid-template-columns: 1fr; grid-template-rows: none; gap: 26px; height: auto; }
+.m .sheet, .m .w51-foot, .m .w51-side { grid-column: auto; grid-row: auto; }
+.m .sheet { padding: 22px 26px 24px; }
+.m .w53 .sheet { height: auto; }
+.m .sheet-text { flex: none; height: clamp(320px, calc(var(--vhz) * .55), 760px); }
+.m .w51-foot { flex-wrap: wrap; gap: 18px 26px; }
+.m .w51-side, .m .w53-side { gap: 26px; }
+.m .mini-print, .m .mini-phrase { height: 230px; }
+.m .w51-side .mini { max-width: 460px; }
+.m .mini .ring { left: -10px; top: -10px; width: calc(100% + 20px); height: calc(100% + 20px); }
+.m .w53-done { margin-top: 10px; }
+.m .g52 { grid-template-columns: 1fr; gap: 36px; }
+.m .chk { padding: 16px 18px; }
+
+/* ---------- 5.4 Final ---------- */
+.m .fin { position: relative; inset: auto; padding: 48px 28px 0; }
+.m .fin-t { font-size: 70px; }
+.m .fin-msg { font-size: 32px; }
+.m .fin-cols { grid-template-columns: 1fr; gap: 36px; margin-top: 40px; }
+.m-wide .fin-cols { grid-template-columns: 1fr 1fr; }
+.m .fin-film { position: relative; margin-top: 48px; padding: 30px 0; }
+.m .fin-film .film-row { flex-wrap: nowrap; gap: 10px; padding: 0 14px; }
+.m .fin-film .film-frame { flex: 1; width: auto; height: auto; aspect-ratio: 3 / 2; }
+
+/* ---------- 5.5 Parteneri ---------- */
+.m .cr { position: relative; inset: auto; display: flex; flex-direction: column; align-items: stretch; gap: 38px; padding: 44px 28px 48px; }
+.m .cr-is89 { width: 420px; max-width: 80%; align-self: center; }
+.m .cr-side { padding-top: 0; gap: 34px; }
+.m .cr-cp { width: 480px; max-width: 100%; }
+.m .cr-tehno img { width: 320px; }
+.m .cr-exit { align-self: flex-start; }
+.m .rz-go { max-width: none; grid-template-columns: 64px minmax(0, 1fr) 32px; gap: 18px; padding: 20px 22px 20px 20px; }
+.m .rz-go-ico { width: 64px; height: 64px; }
+.m .rz-go-ico svg.ico { width: 38px; height: 38px; }
+.m .rz-go-h { font-size: 32px; }
+.m .rz-go > svg.ico { width: 32px; height: 32px; }
+
+/* ---------- 5.6 Rezultatele atelierului ---------- */
+.m .rz { position: relative; inset: auto; display: block; padding: 44px 28px 40px; }
+.m .rz-lead { font-size: 27px; }
+.m .rz-body { display: flex; flex-direction: column; gap: 44px; }
+.m .rz-scroll { flex: none; overflow: visible; padding: 4px 0 0; -webkit-mask-image: none; mask-image: none; }
+.m .rz-list { grid-template-columns: minmax(0, 1fr); }
+.m .rz-body > section, .m .rz-item { min-width: 0; }
+.m-wide .rz-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.m .rz-sheet { padding: 36px 20px; }
+.m-wide .rz-sheet { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* ---------- Ferestre: pe tot ecranul, cu butonul de închidere mereu sus ---------- */
+.m .modal { position: fixed; inset: 0; z-index: 40; display: block; background: rgba(31, 29, 30, .6); }
+.m .modal-panel { position: absolute; inset: 0; width: auto !important; height: auto !important; max-height: none; display: flex; flex-direction: column;
+  padding: 0; border-radius: 0; overflow: hidden; box-shadow: none; }
+.m .modal-body { display: block; flex: 1; min-height: 0; width: var(--vw); overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+  zoom: var(--z); padding: 96px 28px 48px; }
+.m .modal-x { top: 12px; right: 12px; z-index: 3; width: 44px; height: 44px; border-width: 2px; }
+.m .modal-x svg { width: 20px; height: 20px; }
+.m .modal .h1 { padding-right: 0; }
+/* cititorul de povești și fotografiile: zona din mijloc se derulează, butoanele rămân jos */
+.m .modal-rd .modal-body, .m .modal-lb .modal-body { display: flex; flex-direction: column; overflow: hidden; padding: 0; }
+.m .rd-head { padding: 26px 96px 16px 28px; }
+.m .rd-title { font-size: 42px; }
+.m .rd-text { padding: 22px 28px 30px; font-size: max(29px, calc(17px / var(--z))); line-height: 1.6; }
+.m .rd-scene { margin: 1.2em auto; }
+.m .rd-nav { gap: 12px; padding: 12px 20px 16px; }
+.m .rd-nav .btn { width: 84px; min-height: 76px; padding: 0; }
+.m .rd-nav .btn svg.ico { width: 36px; height: 36px; }
+.m .rd-l { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }   /* pe telefon: doar săgeți (numele rămâne pentru cititoarele de ecran) */
+.m .rd-pos { font-size: 23px; }
+.m-wide .rd-nav .btn { width: auto; padding: 0 22px; }
+.m-wide .rd-l { position: static; width: auto; height: auto; overflow: visible; clip: auto; }
+.m .modal-lb .modal-body { padding: 90px 14px 22px; }
+.m .lb-arrow { width: 72px; height: 72px; margin-top: -36px; background: rgba(46, 43, 44, .85); }
+.m .lb-arrow--prev { left: 10px; } .m .lb-arrow--next { right: 10px; }
+.m .lb-cap { font-size: 24px; }
+.m .fd { grid-template-columns: 1fr; gap: 26px; }
+.m .fd-fig { height: auto; aspect-ratio: 3 / 2; }
+.m .fd-side { padding-top: 0; }
+.m .lb61-grid { grid-template-columns: 1fr; gap: 28px; }
+.m .lb61-print, .m .lb61-phrase { height: 320px; }
+.m .lb61-phrase p { font-size: 60px; }
+.m .modal-62 .modal-body { display: flex; flex-direction: column; }
+.m .lb62 { height: auto; flex: 1; }
+.m .lb62-grid { grid-template-columns: 1fr; gap: 28px; }
+.m .lb62-plan { overflow: visible; padding-right: 0; }
+.m .col-list { grid-auto-flow: row; grid-template-rows: none; grid-template-columns: 1fr; gap: 12px; }
+.m .col-list li { font-size: 28px; }
+.m .web { grid-template-columns: 1fr; gap: 28px; }
+.m .menu-item { padding: 16px 20px; font-size: 26px; }
+.m .menu-lock { font-size: 20px; }
+.m .menu-ios { margin-top: 6px; }
+.m .confirm .h2 { padding-right: 0; }
+
+/* ---------- Mesaje (pixeli reali) ---------- */
+.m .banner { position: fixed; left: 10px; right: 10px; bottom: 66px; max-width: none; gap: 12px; padding: 12px 10px 12px 16px; border-left-width: 5px; font-size: 15px; z-index: 35; }
+.m .banner > svg { width: 22px !important; height: 22px !important; }
+.m .banner .x { width: 38px; height: 38px; }
+.m .banner .x svg { width: 16px; height: 16px; }
+.m .toast { position: fixed; left: 50% !important; translate: -50% 0; bottom: 70px; width: max-content; max-width: calc(100vw - 20px); gap: 8px; padding: 10px 18px; border-width: 2px; font-size: 15px; z-index: 35; }
+.m .toast svg { width: 18px; height: 18px; }
+
+/* ---------- Logo-ul animat de la început și ecranul de ieșire ---------- */
+.m .intro { position: fixed; inset: 0; }
+.m .intro video, .m .intro img { width: 100%; height: 100%; max-width: 100vw; max-height: 100vh; object-fit: contain; }
+.m .intro .skip { position: fixed; right: 14px; bottom: 16px; min-height: 48px; padding: 0 22px; border-width: 2px; font-size: 16px; }
+.m .end { position: fixed; inset: 0; padding: 24px; }
+.m .end img { width: 60vw; max-width: 320px; height: auto; margin: 0 auto; }
+.m .end .lead { font-size: 18px; margin-top: 24px !important; }
+
+/* ---------- Subtitrarea și bara de control (pixeli reali, jos pe ecran) ---------- */
+.m .cc { position: fixed; left: 0; right: 0; bottom: 56px; z-index: 30; height: auto; justify-content: flex-start; padding: 8px 14px 9px; font-size: 15px; line-height: 1.35; }
+.m .cc.is-off { display: none; }
+.m .cc span { max-width: none; padding-left: 10px; border-left-width: 3px; }
+.m .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 31; height: 56px; gap: 2px; padding: 0 6px; }
+.m .bar-btn { height: 44px; min-width: 44px; padding: 0 9px; gap: 6px; font-size: 15px; justify-content: center; }
+.m .bar-btn svg { width: 22px; height: 22px; }
+.m .bar-label { display: none; }
+.m .bar-voice { gap: 0; padding: 0 2px; border: 0; }
+.m .bar-nav { gap: 4px; margin-left: 2px; }
+.m .bar-nav .bar-btn { padding: 0 12px; }
+.m .bar-rate { min-width: 44px; }
+/* pe telefon ținut în picioare: doar ce încape (textele rămân pentru cititoarele de ecran) */
+.m #bMenu span, .m #bVoice span, .m #bPrev span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 599px) {
+  .m #bSkip, .m #bRate, .m #bReplay { display: none; }
+}
+@media (max-width: 379px) {
+  .m #bNext span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .m .bar-btn { min-width: 42px; padding: 0 8px; }
+}
+@media (min-width: 720px) {
+  .m .bar-label { display: block; max-width: 260px; margin-left: 4px; font-size: 14px; }
+  .m #bMenu span, .m #bPrev span { position: static; width: auto; height: auto; overflow: visible; clip: auto; }
+}
